@@ -1,10 +1,8 @@
 Dollar and Cent
 ===========
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/ankurp/Dollar.swift?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ankurp/Dollar.swift?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-![Introducing Dollar and Cent](https://raw.githubusercontent.com/ankurp/Dollar.swift/master/assets/hero.png)
-
-Dollar is a Swift library that provides useful functional programming helper methods without extending any built in objects. It is similar to Lo-Dash or Underscore in Javascript.
+Dollar is a Swift library that provides useful functional programming helper methods without extending any built in objects. It is similar to [Lo-Dash](https://lodash.com) or [Underscore.js](http://underscorejs.org) in Javascript.
 
 Cent is a library that extends certain Swift object types using the extension feature and gives its two cents to Swift language.
 
@@ -84,6 +82,18 @@ $.contains([1, 2, 3, 1, 2, 3], value: 10)
 => false
 ```
 
+### cycle - `$.cycle`
+
+Cycles through the array definetly or indefinetly passing each element into the callback function. The second parameter is to specify how many times to cycle through the array. If left out it will cycle indefinetly.
+
+```swift
+$.cycle([1, 2, 3], 2) {
+  print($0)
+}
+// Prints the following
+123123
+```
+
 ### difference - `$.difference`
 
 Creates an array excluding all values of the provided arrays
@@ -104,6 +114,23 @@ $.every([1, 2, 3, 4], iterator: { $0 < 20 })
 
 $.every([1, 2, 3, 4]) { $0 == 1 } 
 => false
+```
+
+### fetch - `$.fetch`
+
+Get element from an array at the given index which can be negative to find elements from the end of the array. A default value can be returned if indexing out of bounds.
+
+
+```swift
+let arr = [1, 2, 3, 4, 5, 6, 7, 8]
+$.fetch(arr, 100)
+=> nil
+
+$.fetch(arr, 100, orElse: 42)
+=> 42
+
+$.fetch(arr, -1)
+=> 8
 ```
 
 ### find - `$.find`
@@ -688,13 +715,34 @@ times
 => 1
 ```
 
-### noop - `$.noop()`
+### noop - `$.noop`
 
 A no-operation function.
 
 ```swift
 $.noop() 
 => nil
+```
+
+### once - `$.once`
+
+Get a wrapper function that executes the passed function only once. Useful for getting shared config or creating singleton objects.
+
+```swift
+func createConfig() -> [String: String] {
+  var i = 1
+  return [
+    "App ID": "\(i++)",
+    "URL": "https://someurl"
+  ]
+}
+
+let getConfig = $.once(createConfig)
+getConfig()
+=> ["App ID": "1", "URL": "https://someurl"]
+
+getConfig()
+=> ["App ID": "1", "URL": "https://someurl"]
 ```
 
 ### partial - `$.partial`
@@ -863,6 +911,18 @@ $(array: [[1, 2], 3, [[4], 5]])
 
 ## Array Extensions ##
 
+### `<< elem: Element -> [Element]`
+
+Overloaded operator to append element to an array or append elements from another array into the first array. Return array with the element appended in the end.
+
+```swift
+var array = [1, 2, 3]
+array << 4
+=> [1, 2, 3, 4]
+array << [5, 6]
+=> [1, 2, 3, 4, 5, 6]
+```
+
 ### `at(indexes: Int...) -> [Element]`
 
 Creates an array of elements from the specified indexes, or keys, of the collection.
@@ -871,6 +931,23 @@ Creates an array of elements from the specified indexes, or keys, of the collect
 let array = ["foo", "spam", "bar", "eggs"]
 let some = array.at(1, 3)
 => ["spam", "eggs"]
+```
+
+### `cycle<U>(times: Int, callback: (Element) -> U)`
+
+Cycles through the array definetly or indefinetly passing each element into the callback function. The second parameter is to specify how many times to cycle through the array. If left out it will cycle indefinetly.
+
+```swift
+[1, 2, 3].cycle(2) {
+  print($0)
+}
+// Prints the following
+123123
+
+[1, 2, 3].cycle {
+  print($0)
+}
+// Cycles in an infinite loop
 ```
 
 ### `every(iterator: (Element) -> Bool) -> Bool`
@@ -882,6 +959,23 @@ Checks if the given callback returns true value for all items in the array.
   a.hasSuffix("gry") 
 }
 => true
+```
+
+### `fetch(index: Int, orElse: T? = .None) -> T!`
+
+Get element from an array at the given index which can be negative to find elements from the end of the array. A default value can be returned if indexing out of bounds.
+
+
+```swift
+let arr = [1, 2, 3, 4, 5, 6, 7, 8]
+arr.fetch(100)
+=> nil
+
+arr.fetch(100, orElse: 42)
+=> 42
+
+arr.fetch(-1)
+=> 8
 ```
 
 ### `findIndex(iterator: (Element) -> Bool) -> Int?`
@@ -921,7 +1015,7 @@ let first = ["foo", "bar"].first()
 
 Flattens a nested array of any depth.
 
-```
+```swift
 let unFlattened = ["foo", ["bar"], [["spam"]], [[["eggs"]]] ]
 let flattened = unFlattened.flatten() 
 => ["foo", "bar", "spam", "eggs"]
@@ -983,6 +1077,18 @@ Retrieves the maximum value in an array.
 ```swift
 let max = [ 0, 1, 2].max()
 => 2
+```
+
+## Character Extensions ##
+
+### `"A".description -> String`
+
+Get string description of Character
+
+```swift
+let ch: Character = "A"
+let str = ch.description
+=> "A"
 ```
 
 ## Date Extensions ##
@@ -1075,6 +1181,15 @@ Invoke a callback n times
 
 ## String Extensions ##
 
+### `.length`
+
+Get the length of the string
+
+```swift
+"Hello".length
+=> 5
+```
+
 ### `=~ str: String -> Bool`
 
 Does a regex match of whether regex string on the right is matches the string on the left
@@ -1125,6 +1240,37 @@ Get substring using subscript notation and by passing a range
 => true
 ```
 
+### `indexOf(char: Character) -> Int?`
+
+Get the start index of character
+
+```swift
+"hello world".indexOf(Character("0"))!
+=> 4
+```
+
+
+### `indexOf(str: String) -> Int?`
+
+Get the start index of string
+
+```swift
+"hello world".indexOf("llo")!
+=> 2
+
+"hello world".indexOf("illo")
+=> nil
+```
+
+### `indexOf(pattern: String) -> Int?`
+
+Get the start index of regex pattern inside the string
+
+```swift
+"hello world".indexOf(".llo")!
+=> 1
+```
+
 ### `split(delimiter: Character) -> [String]`
 
 Get an array from string split using the delimiter character
@@ -1162,6 +1308,45 @@ Get string without leading or trailing spaces
 let spaces = "   Hello   "
 spaces.strip()
 => "Hello"
+```
+
+## Regex ##
+
+### `init`
+
+Init with regex pattern as string
+
+```swift
+Regex.init("^Hello.World$") // Regex that matches "Hello World"
+```
+
+### `matches(testStr: String) -> [AnyObject]`
+
+Return matches based on String passed.
+
+```swift
+let re = Regex.init("^Hello.World$")
+re.matches("Hello World")
+```
+
+### `test(testStr: String) -> Bool`
+
+```swift
+let re = Regex.init("^Hello.World$")
+re.matches("Hello World")
+=> true
+
+re.matches("Str")
+=> false
+```
+
+### `escapeStr(str: String) -> String`
+
+Escape string with regex characters
+
+```swift
+Regex.escape("Hello.World")
+=> "Hello\.World"
 ```
 
 ## Range Extensions ##

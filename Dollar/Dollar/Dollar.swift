@@ -73,70 +73,6 @@ public class Dollar {
         }
     }
     
-    /// Get the fourth object in the wrapper object.
-    ///
-    /// :return Fourth element from the array.
-    public func fourth() -> Dollar {
-        return self.queue {
-            Dollar.fourth($0 as Array)
-        }
-    }
-    
-    /// Get the fifth object in the wrapper object.
-    ///
-    /// :return Fifth element from the array.
-    public func fifth() -> Dollar {
-        return self.queue {
-            Dollar.fifth($0 as Array)
-        }
-    }
-    
-    /// Get the sixth object in the wrapper object.
-    ///
-    /// :return Sixth element from the array.
-    public func sixth() -> Dollar {
-        return self.queue {
-            Dollar.sixth($0 as Array)
-        }
-    }
-    
-    /// Get the seventh object in the wrapper object.
-    ///
-    /// :return Seventh element from the array.
-    public func seventh() -> Dollar {
-        return self.queue {
-            Dollar.seventh($0 as Array)
-        }
-    }
-    
-    /// Get the eighth object in the wrapper object.
-    ///
-    /// :return Eighth element from the array.
-    public func eighth() -> Dollar {
-        return self.queue {
-            Dollar.eighth($0 as Array)
-        }
-    }
-    
-    /// Get the ninth object in the wrapper object.
-    ///
-    /// :return Ninth element from the array.
-    public func ninth() -> Dollar {
-        return self.queue {
-            Dollar.ninth($0 as Array)
-        }
-    }
-    
-    /// Get the tenth object in the wrapper object.
-    ///
-    /// :return Tenth element from the array.
-    public func tenth() -> Dollar {
-        return self.queue {
-            Dollar.tenth($0 as Array)
-        }
-    }
-    
-    /// Another comment
     /// Flattens nested array.
     ///
     /// :return The wrapper object.
@@ -419,6 +355,32 @@ public class Dollar {
         }
         return newArr
     }
+
+    /// Cycles through the array indefinetly passing each element into the callback function
+    ///
+    /// :param array to cycle through
+    /// :param callback function to call with the element
+    public class func cycle<T, U>(array: [T], callback: (T) -> (U)) {
+        while true {
+            for elem in array {
+                callback(elem)
+            }
+        }
+    }
+    
+    /// Cycles through the array n times passing each element into the callback function
+    ///
+    /// :param array to cycle through
+    /// :param times Number of times to cycle through the array
+    /// :param callback function to call with the element
+    public class func cycle<T, U>(array: [T], _ times: Int, callback: (T) -> (U)) {
+        var i = 0
+        while i++ < times {
+            for elem in array {
+                callback(elem)
+            }
+        }
+    }
         
     /// Creates an array excluding all values of the provided arrays.
     ///
@@ -462,6 +424,23 @@ public class Dollar {
             }
         }
         return true
+    }
+    
+    /// Get element from an array at the given index which can be negative
+    /// to find elements from the end of the array
+    ///
+    /// :param array The array to fetch from
+    /// :param index Can be positive or negative to find from end of the array
+    /// :param orElse Default value to use if index is out of bounds
+    /// :return Element fetched from the array or the default value passed in orElse
+    public class func fetch<T>(array: [T], _ index: Int, orElse: T? = .None) -> T! {
+        if index < 0 && -index < array.count {
+            return array[array.count + index]
+        } else if index < array.count {
+            return array[index]
+        } else {
+            return orElse
+        }
     }
     
     /// Iterates over elements of an array and returning the first element
@@ -549,98 +528,14 @@ public class Dollar {
         }
     }
     
-    /// Gets the fourth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Fourth element from the array.
-    public class func fourth<T>(array: [T]) -> T? {
-        if array.count < 4 {
-            return .None
-        } else {
-            return array[3]
-        }
-    }
-    
-    /// Gets the fifth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Fifth element from the array.
-    public class func fifth<T>(array: [T]) -> T? {
-        if array.count < 5 {
-            return .None
-        } else {
-            return array[4]
-        }
-    }
-    
-    /// Gets the sixth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Sixth element from the array.
-    public class func sixth<T>(array: [T]) -> T? {
-        if array.count < 6 {
-            return .None
-        } else {
-            return array[5]
-        }
-    }
-    
-    /// Gets the seventh element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Seventh element from the array.
-    public class func seventh<T>(array: [T]) -> T? {
-        if array.count < 7 {
-            return .None
-        } else {
-            return array[6]
-        }
-    }
-    
-    /// Gets the eighth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Eighth element from the array.
-    public class func eighth<T>(array: [T]) -> T? {
-        if array.count < 8 {
-            return .None
-        } else {
-            return array[7]
-        }
-    }
-    
-    /// Gets the ninth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Ninth element from the array.
-    public class func ninth<T>(array: [T]) -> T? {
-        if array.count < 9 {
-            return .None
-        } else {
-            return array[8]
-        }
-    }
-    
-    /// Gets the tenth element in the array.
-    ///
-    /// :param array The array to wrap.
-    /// :return Tenth element from the array.
-    public class func tenth<T>(array: [T]) -> T? {
-        if array.count < 10 {
-            return .None
-        } else {
-            return array[9]
-        }
-    }
-    
     /// Flattens a nested array of any depth.
     ///
     /// :param array The array to flatten.
     /// :return Flattened array.
-    public class func flatten(array: [AnyObject]) -> [AnyObject] {
-        var resultArr: [AnyObject] = []
-        for elem : AnyObject in array {
-            if let val = elem as? [AnyObject] {
+    public class func flatten<T>(array: [T]) -> [T] {
+        var resultArr: [T] = []
+        for elem : T in array {
+            if let val = elem as? [T] {
                 resultArr += self.flatten(val)
             } else {
                 resultArr.append(elem)
@@ -891,8 +786,7 @@ public class Dollar {
     /// A no-operation function.
     ///
     /// :return nil.
-    public class func noop() -> AnyObject? {
-        return .None
+    public class func noop() -> () {
     }
     
     /// Creates a shallow clone of a dictionary excluding the specified keys.
@@ -909,6 +803,44 @@ public class Dollar {
             }
         }
         return result
+    }
+    
+    /// Get a wrapper function that executes the passed function only once
+    ///
+    /// :param function That takes variadic arguments and return nil or some value
+    /// :return Wrapper function that executes the passed function only once
+    /// Consecutive calls will return the value returned when calling the function first time
+    public class func once<T, U>(function: (T...) -> U) -> (T...) -> U {
+        var result: U?
+        var onceFunc = { (params: T...) -> U in
+            typealias Function = [T] -> U
+            if let returnVal = result {
+                return returnVal
+            } else {
+                var f = unsafeBitCast(function, Function.self)
+                result = f(params)
+                return result!
+            }
+        }
+        return onceFunc
+    }
+
+    /// Get a wrapper function that executes the passed function only once
+    ///
+    /// :param function That takes variadic arguments and return nil or some value
+    /// :return Wrapper function that executes the passed function only once
+    /// Consecutive calls will return the value returned when calling the function first time
+    public class func once<U>(function: () -> U) -> () -> U {
+        var result: U?
+        var onceFunc = { () -> U in
+            if let returnVal = result {
+                return returnVal
+            } else {
+                result = function()
+                return result!
+            }
+        }
+        return onceFunc
     }
     
     /// Get the first object in the wrapper object.
@@ -1321,13 +1253,13 @@ public class Dollar {
     ///
     /// :param arrays The arrays to be grouped.
     /// :return An array of grouped elements.
-    public class func zip(arrays: [AnyObject]...) -> [AnyObject] {
-        var result: [[AnyObject]] = []
-        for _ in self.first(arrays)! as [AnyObject] {
-            result.append([] as [AnyObject])
+    public class func zip<T>(arrays: [T]...) -> [[T]] {
+        var result: [[T]] = []
+        for _ in self.first(arrays)! as [T] {
+            result.append([] as [T])
         }
         for (index, array) in enumerate(arrays) {
-            for (elemIndex, elem : AnyObject) in enumerate(array) {
+            for (elemIndex, elem : T) in enumerate(array) {
                 result[elemIndex].append(elem)
             }
         }
@@ -1349,8 +1281,3 @@ public class Dollar {
 }
 
 public typealias $ = Dollar
-
-
-extension Dollar {
-    
-}

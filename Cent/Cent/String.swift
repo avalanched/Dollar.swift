@@ -10,6 +10,12 @@ import Foundation
 
 extension String {
     
+    var length: Int {
+        get {
+            return countElements(self)
+        }
+    }
+    
     /// Get character at a subscript
     ///
     /// :param i Index for which the character is returned
@@ -42,6 +48,30 @@ extension String {
         return self.substringWithRange(Range(start: start, end: end))
     }
     
+    /// Get the start index of Charcter
+    ///
+    /// :return start index of .None if not found
+    public func indexOf(char: Character) -> Int? {
+        return self.indexOf(char.description)
+    }
+    
+    /// Get the start index of string
+    ///
+    /// :return start index of .None if not found
+    public func indexOf(str: String) -> Int? {
+        return self.indexOfRegex(Regex.escapeStr(str))
+    }
+    
+    /// Get the start index of regex pattern
+    ///
+    /// :return start index of .None if not found
+    public func indexOfRegex(pattern: String) -> Int? {
+        if let range = Regex(pattern).rangeOfFirstMatch(self).toRange() {
+            return range.startIndex
+        }
+        return .None
+    }
+    
     /// Get an array from string split using the delimiter character
     ///
     /// :return Array of strings after spliting
@@ -71,15 +101,28 @@ extension String {
     public func strip() -> String {
         return self.stringByTrimmingCharactersInSet(.whitespaceCharacterSet())
     }
-    
+}
+
+extension Character {
+    public var description: String {
+        get {
+            return String(self)
+        }
+    }
 }
 
 infix operator =~ {}
 
+/// Regex match the string on the left with the string pattern on the right
+///
+/// :return true if string matches the pattern otherwise false
 public func =~(str: String, pattern: String) -> Bool {
     return Regex(pattern).test(str)
 }
 
+/// Concat the string to itself n times
+///
+/// :return concatenated string
 public func * (str: String, n: Int) -> String {
     var stringBuilder = [String]()
     n.times {
