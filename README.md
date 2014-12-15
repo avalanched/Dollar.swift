@@ -292,6 +292,17 @@ $.rest([3, 4, 5], numElements: 2)
 => [5]
 ```
 
+### map - `$.map`
+
+Maps each element to new value based on the map function passed
+
+```swift
+$.map([1, 2, 3, 4]) { 
+  $0 * 2
+}
+=> [2, 4, 6, 8]
+```
+
 ### min - `$.min`
 
 Retrieves the minimum value in an array.
@@ -354,6 +365,17 @@ $.range(from: 1, through: 5)
 
 $.range(from: 0, through: 20, incrementBy: 5)
 => [0, 5, 10, 15, 20]
+```
+
+### reduce - `$.reduce`
+
+Reduce function that will resolve to one value after performing combine function on all elements
+
+```swift
+$.reduce([1, 2, 3], initial: 0) { (total, element) in
+    total + element
+}
+=> 6
 ```
 
 ### sample - `$.sample`
@@ -1177,6 +1199,79 @@ Invoke a callback n times
 ```swift
 5.times { (a: Int) -> () in print("\(a) ") } 
 => 0 1 2 3 4  
+```
+
+### `isEven`
+
+Check if int is even
+
+```swift
+2.isEven
+=> true
+
+1.isEven
+=> false
+```
+
+### `isOdd`
+
+Check if int is odd
+
+```swift
+3.isOdd
+=> true
+
+2.isOdd
+=> false
+```
+
+### `digits() -> [Int]`
+
+Splits the int into array of digits
+
+```swift
+4208.digits()
+=> [4, 2, 0, 8]
+```
+
+### `next() -> Int`
+
+Get the next int
+
+```swift
+10.next()
+=> 11
+```
+
+### `prev() -> Int`
+
+Get the previous int
+
+```swift
+10.prev()
+=> 9
+```
+
+### `upTo(limit: Int, callback: () -> ())`
+
+Invoke the callback from int up to and including limit
+
+```swift
+3.upTo(5) {
+  print("Hi")
+}
+Prints "HiHiHi"
+```
+
+### `downTo(limit: Int, callback: () -> ())`
+
+Invoke the callback from int down to and including limit
+
+```swift
+3.upTo(0) {
+  print("Hi")
+}
+Prints "HiHiHiHi"
 ```
 
 ## String Extensions ##
